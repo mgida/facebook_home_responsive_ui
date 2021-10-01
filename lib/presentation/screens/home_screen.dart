@@ -30,16 +30,16 @@ class _HomeScreenState extends State<HomeScreen> {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => RoomCubit(),
+            create: (context) => RoomCubit()..loadRooms(),
           ),
           BlocProvider(
-            create: (context) => StoryCubit(),
+            create: (context) => StoryCubit()..loadStories(),
           ),
           BlocProvider(
-            create: (context) => PostCubit(),
+            create: (context) => PostCubit()..loadPosts(),
           ),
           BlocProvider(
-            create: (context) => OptionsCubit(),
+            create: (context) => OptionsCubit()..displayOptions(),
           ),
         ],
         child: Scaffold(

@@ -111,7 +111,7 @@ final List<UserModel> onlineUsers = [
   ),
 ];
 
-final List<StoryModel> stories = [
+final List<StoryModel> storiesData = [
   StoryModel(
     user: onlineUsers[2],
     imageUrl:
@@ -159,7 +159,7 @@ final List<StoryModel> stories = [
   ),
 ];
 
-final List<PostModel> posts = [
+final List<PostModel> postsData = [
   PostModel(
     user: currentUser,
     caption: 'Here the future of football',

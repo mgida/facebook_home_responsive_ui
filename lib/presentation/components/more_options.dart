@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'build_more_options_list_view.dart';
+import 'custom_text.dart';
 
 class MoreOptions extends StatelessWidget {
   @override
@@ -11,10 +12,20 @@ class MoreOptions extends StatelessWidget {
       constraints: BoxConstraints(maxWidth: 280.0),
       child: BlocBuilder<OptionsCubit, OptionsState>(
         builder: (context, state) {
-          final optionsCubit = BlocProvider.of<OptionsCubit>(context);
-          return BuildMoreOptionsListView(
-            moreOptions: optionsCubit.moreOptions,
-          );
+          if (state is OptionsLoaded) {
+            final options = state.options;
+            return BuildMoreOptionsListView(
+              moreOptions: options,
+            );
+          } else if (state is OptionsFailure) {
+            return Container(
+              child: CustomText(title: '${state.errorMsg}'),
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
         },
       ),
     );

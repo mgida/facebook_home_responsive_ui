@@ -37,7 +37,7 @@ class Contacts extends StatelessWidget {
             child: BlocBuilder<RoomCubit, RoomState>(
               builder: (context, state) {
                 final roomBloc = BlocProvider.of<RoomCubit>(context);
-                return BuildContactsListView(users: roomBloc.onlineUsersCubit);
+                return BuildContactsListView(users: roomBloc.rooms);
               },
             ),
           ),

@@ -5,6 +5,7 @@ import 'package:facebook_home_responsive_ui/logic/story_cubit.dart';
 import 'package:facebook_home_responsive_ui/presentation/components/contacts.dart';
 import 'package:facebook_home_responsive_ui/presentation/components/create_post_container.dart';
 import 'package:facebook_home_responsive_ui/presentation/components/custom_post_container.dart';
+import 'package:facebook_home_responsive_ui/presentation/components/custom_text.dart';
 import 'package:facebook_home_responsive_ui/presentation/components/more_options.dart';
 import 'package:facebook_home_responsive_ui/presentation/components/rooms.dart';
 import 'package:facebook_home_responsive_ui/presentation/components/stories.dart';
@@ -41,11 +42,21 @@ class HomeScreenWeb extends StatelessWidget {
                 sliver: SliverToBoxAdapter(
                   child: BlocBuilder<StoryCubit, StoryState>(
                     builder: (context, state) {
-                      final storyCubit = BlocProvider.of<StoryCubit>(context);
-                      return Stories(
-                        currentUser: currentUser,
-                        stories: storyCubit.storiesCubit,
-                      );
+                      if (state is StoryLoaded) {
+                        final stories = state.stories;
+                        return Stories(
+                          currentUser: currentUser,
+                          stories: stories,
+                        );
+                      } else if (state is StoryFailure) {
+                        return Container(
+                          child: CustomText(title: '${state.errorMsg}'),
+                        );
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
                     },
                   ),
                 ),
@@ -59,14 +70,25 @@ class HomeScreenWeb extends StatelessWidget {
                   child: BlocBuilder<RoomCubit, RoomState>(
                     builder: (context, state) {
                       final roomCubit = BlocProvider.of<RoomCubit>(context);
-                      return Rooms(onlineUsers: roomCubit.onlineUsersCubit);
+                      if (state is RoomLoaded) {
+                        final onlineUsers = roomCubit.rooms;
+                        return Rooms(onlineUsers: onlineUsers);
+                      } else if (state is RoomFailure) {
+                        return Container(
+                          child: CustomText(title: '${state.errorMsg}'),
+                        );
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
                     },
                   ),
                 ),
               ),
               BlocConsumer<PostCubit, PostState>(
                 listener: (context, state) {
-                  if (state is! PostInitial) {
+                  if (state is! PostLoading) {
                     Future.delayed(
                       Duration(seconds: 2),
                     );
@@ -74,15 +96,25 @@ class HomeScreenWeb extends StatelessWidget {
                 },
                 builder: (context, state) {
                   final postCubit = BlocProvider.of<PostCubit>(context);
-                  return SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final post = postCubit.postsCubit[index];
-                        return CustomPostContainer(post: post);
-                      },
-                      childCount: postCubit.postsCubit.length,
-                    ),
-                  );
+                  if (state is PostLoaded) {
+                    return SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final post = postCubit.posts[index];
+                          return CustomPostContainer(post: post);
+                        },
+                        childCount: postCubit.posts.length,
+                      ),
+                    );
+                  } else if (state is PostFailure) {
+                    return Container(
+                      child: CustomText(title: '${state.errorMsg}'),
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
                 },
               ),
             ],
